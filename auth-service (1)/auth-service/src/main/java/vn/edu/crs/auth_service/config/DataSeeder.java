@@ -1,0 +1,27 @@
+package vn.edu.crs.auth_service.config;
+
+import vn.edu.crs.auth_service.entity.User;
+import vn.edu.crs.auth_service.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+
+@Component
+@RequiredArgsConstructor
+public class DataSeeder implements CommandLineRunner {
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public void run(String... args) {
+        if (userRepository.findByUsername("admin").isEmpty()) {
+            User admin = new User(null, "admin", passwordEncoder.encode("admin123"), "ADMIN");
+            userRepository.save(admin);
+        }
+        if (userRepository.findByUsername("student1").isEmpty()) {
+            User student = new User(null, "student1", passwordEncoder.encode("student123"), "STUDENT");
+            userRepository.save(student);
+        }
+    }
+}

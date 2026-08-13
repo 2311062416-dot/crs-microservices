@@ -1,0 +1,47 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        # Route Auth Service
+        - id: auth-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/auth/**, /api/auth
+          filters:
+            - RewritePath=/api/auth/?(?<segment>.*), /auth/$\{segment}
+
+        # Route Course Service
+        - id: course-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/courses/**, /api/courses
+          filters:
+            - RewritePath=/api/courses/?(?<segment>.*), /courses$\{segment}
+
+        # Route Registration Service
+        - id: registration-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/registrations/**, /api/registrations
+          filters:
+            - RewritePath=/api/registrations/?(?<segment>.*), /registrations/$\{segment}
+
+        # Route dành cho Partner
+        - id: course-service-partner
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/public/courses
+          filters:
+            - RewritePath=/api/public/courses, /courses
+
+jwt:
+  secret: CRS-Microservices-Secret-Key-Nam-3-Hoc-Ky-2026-Doi-Trong-Thuc-Te
+  expiration-ms: 86400000
+
+partner:
+  api-key: crs-partner-key-2026
