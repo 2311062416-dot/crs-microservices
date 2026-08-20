@@ -6,6 +6,19 @@ spring:
     name: api-gateway
   cloud:
     gateway:
+      # --- THÊM KHỐI CẤU HÌNH GLOBALCORS DƯỚI ĐÂY ---
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:5173"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+      # ---------------------------------------------
       routes:
         # Route Auth Service
         - id: auth-service
