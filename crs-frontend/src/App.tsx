@@ -26,13 +26,18 @@ function App() {
   const extractErrorMessage = (err: unknown): string => {
     if (axios.isAxiosError<ApiErrorResponse>(err)) {
       const data = err.response?.data;
+      // 1. Nếu có thông báo lỗi cụ thể từ server (message)
       if (data?.message) return data.message;
-      if (data) {
-        const firstFieldError = Object.values(data).find((v) => typeof v === 'string');
-        if (firstFieldError) return firstFieldError;
+
+      // 2. Nếu là lỗi validation dạng cặp key-value { tenMonHoc: "...", soTinChi: "..." }
+      if (data && typeof data === 'object') {
+        const fieldErrors = Object.entries(data)
+          .filter(([key, val]) => key !== 'timestamp' && key !== 'status' && typeof val === 'string')
+          .map(([, val]) => val);
+        if (fieldErrors.length > 0) return fieldErrors[0] as string;
       }
     }
-    return 'Da xay ra loi, vui long thu lai.';
+    return 'Đã xảy ra lỗi, vui lòng thử lại.';
   };
 
   const handleFormSubmit = async (values: CourseFormValues) => {
