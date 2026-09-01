@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { useCourses } from '../api/useCourses';
+import { useCourses } from "../api/useCourses";
 import { createCourse, updateCourse, deleteCourse } from '../api/courseApi';
 import SearchBox from '../components/SearchBox';
 import CourseList from '../components/CourseList';

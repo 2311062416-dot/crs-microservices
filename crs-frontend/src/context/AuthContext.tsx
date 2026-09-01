@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, type ReactNode } from '
 import type { LoginResponse } from '../types/auth';
 
 interface AuthUser {
+  id: number;
   username: string;
   role: 'ADMIN' | 'STUDENT';
 }
@@ -24,13 +25,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const savedUser = localStorage.getItem(USER_KEY);
     const savedToken = localStorage.getItem(TOKEN_KEY);
     if (savedUser && savedToken) {
-      setUser(JSON.parse(savedUser));
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (e) {
+        localStorage.removeItem(USER_KEY);
+        localStorage.removeItem(TOKEN_KEY);
+      }
     }
   }, []);
 
   const login = (data: LoginResponse) => {
     localStorage.setItem(TOKEN_KEY, data.token);
-    const authUser: AuthUser = { username: data.username, role: data.role };
+
+    // Đã thêm id: data.userId để khớp với interface AuthUser
+    const authUser: AuthUser = {
+      id: data.userId,
+      username: data.username,
+      role: data.role
+    };
+
     localStorage.setItem(USER_KEY, JSON.stringify(authUser));
     setUser(authUser);
   };

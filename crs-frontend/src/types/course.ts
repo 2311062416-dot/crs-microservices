@@ -1,9 +1,9 @@
 export interface Course {
   id: number;
-  tenMonHoc: string;
-  soTinChi: number;
-  soChoToiDa: number;
-  soChoConLai: number;
+  code: string;
+  name: string;
+  credits: number;
+  description?: string;
 }
 
 export interface PagedResponse<T> {
@@ -13,9 +13,10 @@ export interface PagedResponse<T> {
   number: number;
   size: number;
 }
+
 export interface CourseFormValues {
   tenMonHoc: string;
-  soTinChi: string; // Sử dụng kiểu string để dễ kiểm soát input rỗng trên form
+  soTinChi: string;
   soChoToiDa: string;
 }
 

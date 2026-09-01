@@ -2,6 +2,7 @@ package vn.edu.crs.auth_service.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -21,19 +22,27 @@ public class JwtUtil {
     @Value("${jwt.expiration:86400000}")
     private long expiration;
 
+    @Value("${jwt.expiration-ms:86400000}")
+    private long expirationMs;
+
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     // Tạo JWT Token từ username
     // Tạo JWT Token từ username và role
-    public String generateToken(String username, String role) {
+    public String generateToken(Long userId, String username, String role) {
+        SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + expirationMs);
+
         return Jwts.builder()
-                .subject(username)
-                .claim("role", role) // Thêm thông tin role vào Claims của Token
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getSigningKey())
+                .setSubject(username)
+                .claim("userId", userId)
+                .claim("role", role)
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
