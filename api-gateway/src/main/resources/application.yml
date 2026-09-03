@@ -22,15 +22,23 @@ spring:
         - id: auth-service
           uri: http://localhost:8081
           predicates:
-            - Path=/api/auth/**
+            - Path=/api/auth, /api/auth/**
           filters:
             - RewritePath=/api/auth(?<segment>/?.*), /auth$\{segment}
+
+        # Route Auth Service - Management API Keys (ĐÃ SỬA TẠI ĐÂY)
+        - id: auth-service-apikeys
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/api-keys, /api/api-keys/**
+          filters:
+            - RewritePath=/api/api-keys(?<segment>/?.*), /api-keys$\{segment}
 
         # Route Course Service
         - id: course-service
           uri: http://localhost:8082
           predicates:
-            - Path=/api/courses/**
+            - Path=/api/courses, /api/courses/**
           filters:
             - RewritePath=/api/courses(?<segment>/?.*), /courses$\{segment}
 
@@ -38,7 +46,7 @@ spring:
         - id: registration-service
           uri: http://localhost:8083
           predicates:
-            - Path=/api/registrations/**
+            - Path=/api/registrations, /api/registrations/**
           filters:
             - RewritePath=/api/registrations(?<segment>/?.*), /registrations$\{segment}
 
@@ -53,6 +61,3 @@ spring:
 jwt:
   secret: CRS-Microservices-Secret-Key-Nam-3-Hoc-Ky-2026-Doi-Trong-Thuc-Te
   expiration-ms: 86400000
-
-partner:
-  api-key: crs-partner-key-2026

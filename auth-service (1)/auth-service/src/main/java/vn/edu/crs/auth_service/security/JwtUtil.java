@@ -14,13 +14,8 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    // Lấy secret key từ application.properties (hoặc dùng key mặc định nếu chưa khai báo)
     @Value("${jwt.secret:1234567890123456789012345678901234567890}")
     private String secret;
-
-    // Thời gian hết hạn JWT (ví dụ: 1 ngày = 86400000 ms)
-    @Value("${jwt.expiration:86400000}")
-    private long expiration;
 
     @Value("${jwt.expiration-ms:86400000}")
     private long expirationMs;
@@ -29,10 +24,8 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    // Tạo JWT Token từ username
     // Tạo JWT Token từ username và role
     public String generateToken(Long userId, String username, String role) {
-        SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());
         Date now = new Date();
         Date expiry = new Date(now.getTime() + expirationMs);
 
@@ -42,13 +35,20 @@ public class JwtUtil {
                 .claim("role", role)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
     // Trích xuất username từ Token
     public String getUsernameFromToken(String token) {
         return getClaims(token).getSubject();
+    }
+
+    // Trích xuất role từ Token an toàn
+    public String getRoleFromToken(String token) {
+        Claims claims = getClaims(token);
+        Object roleObj = claims.get("role");
+        return roleObj != null ? roleObj.toString() : "";
     }
 
     // Kiểm tra Token có hợp lệ không
